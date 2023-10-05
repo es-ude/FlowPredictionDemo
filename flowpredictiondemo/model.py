@@ -13,7 +13,7 @@ class FlowPredictionModel(Sequential):
                 total_bits=total_bits,
                 frac_bits=frac_bits,
             ),
-            ReLU(total_bits=16),
+            ReLU(total_bits=total_bits),
             Linear(
                 in_features=10,
                 out_features=1,
