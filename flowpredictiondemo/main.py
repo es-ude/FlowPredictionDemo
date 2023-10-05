@@ -18,7 +18,7 @@ OUTPUTS_DIR = Path("outputs")
 
 def load_datasets(
     dataset_path: Path,
-) -> tuple[TensorDataset, TensorDataset]:
+) -> tuple[TensorDataset, TensorDataset, Normalizer, Normalizer]:
     def normalize_dataset(
         ds: Dataset, sample_normalizer: Normalizer, label_normalizer: Normalizer
     ) -> TensorDataset:
@@ -39,7 +39,19 @@ def load_datasets(
     ds_train = normalize_dataset(ds_train, sample_normalizer, label_normalizer)
     ds_val = normalize_dataset(ds_val, sample_normalizer, label_normalizer)
 
-    return ds_train, ds_val
+    return ds_train, ds_val, sample_normalizer, label_normalizer
+
+
+def evaluate_mean_squared_error(
+    model: torch.nn.Module, ds: Dataset, label_normalizer: Normalizer
+) -> float:
+    samples, labels = ds[:]
+    mse = torch.nn.MSELoss()
+    model.to(DEVICE)
+    samples = samples.to(DEVICE)
+    predictions = label_normalizer.rescale(model(samples).flatten())
+    labels = label_normalizer.rescale(labels.to(DEVICE))
+    return mse(predictions, labels).item()
 
 
 def save_training_history(
@@ -59,27 +71,49 @@ def save_training_history(
 def main() -> None:
     OUTPUTS_DIR.mkdir(exist_ok=True)
 
-    ds_train, ds_val = load_datasets(dataset_path=DATA_DIR / "flow_data.csv")
-
-    model = FlowPredictionModel(total_bits=8, frac_bits=7)
-
-    train_losses, val_losses = train(
-        model=model,
-        train_data=ds_train,
-        val_data=ds_val,
-        batch_size=100,
-        epochs=250,
-        learning_rate=1e-3,
-        device=DEVICE,
+    ds_train, ds_val, _, label_normalizer = load_datasets(
+        dataset_path=DATA_DIR / "flow_data.csv"
     )
 
-    save_training_history(
-        train_losses, val_losses, output_path=OUTPUTS_DIR / "train_history.png"
-    )
+    combinations = [
+        (8, 7),
+        (8, 6),
+        (8, 5),
+        (8, 4),
+        (6, 5),
+        (6, 4),
+    ]
 
-    destination = OnDiskPath(name="build", parent=str(OUTPUTS_DIR))
-    design = model.create_design(name="flow_pred_model")
-    design.save_to(destination)
+    mse_losses = []
+    fxp_configs = []
+    for total_bits, frac_bits in combinations:
+        model = FlowPredictionModel(total_bits, frac_bits)
+
+        train_losses, val_losses = train(
+            model=model,
+            train_data=ds_train,
+            val_data=ds_val,
+            batch_size=100,
+            epochs=300,
+            learning_rate=1e-3,
+            device=DEVICE,
+        )
+
+        mse_losses.append(evaluate_mean_squared_error(model, ds_val, label_normalizer))
+        fxp_configs.append(f"T{total_bits}F{frac_bits}")
+
+        save_training_history(
+            train_losses,
+            val_losses,
+            output_path=OUTPUTS_DIR / f"train_history_{fxp_configs[-1]}.png",
+        )
+
+    for config, loss in zip(fxp_configs, mse_losses):
+        print(f"{config}: {loss:.04f}")
+
+    # destination = OnDiskPath(name="build", parent=str(OUTPUTS_DIR))
+    # design = model.create_design(name="flow_pred_model")
+    # design.save_to(destination)
 
 
 if __name__ == "__main__":
