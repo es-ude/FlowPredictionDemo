@@ -61,7 +61,7 @@ def main() -> None:
 
     ds_train, ds_val = load_datasets(dataset_path=DATA_DIR / "flow_data.csv")
 
-    model = FlowPredictionModel(total_bits=8, frac_bits=7)
+    model = FlowPredictionModel(total_bits=8, frac_bits=6)
 
     train_losses, val_losses = train(
         model=model,
