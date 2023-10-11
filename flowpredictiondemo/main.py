@@ -5,6 +5,9 @@ from torch.utils.data import random_split, TensorDataset, Dataset
 import matplotlib.pyplot as plt
 
 from elasticai.creator.file_generation.on_disk_path import OnDiskPath
+from elasticai.creator.vhdl.system_integrations.firmware_env5 import (
+    FirmwareENv5,
+)
 
 from flowpredictiondemo.flow_dataset import FlowDataset
 from flowpredictiondemo.model import FlowPredictionModel
@@ -78,8 +81,10 @@ def main() -> None:
     )
 
     destination = OnDiskPath(name="build", parent=str(OUTPUTS_DIR))
-    design = model.create_design(name="flow_pred_model")
-    design.save_to(destination)
+    design = model.create_design("network")
+    design.save_to(destination.create_subpath("srcs"))
+    firmware = FirmwareENv5(design)
+    firmware.save_to(destination)
 
 
 if __name__ == "__main__":
