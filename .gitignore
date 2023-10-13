@@ -162,5 +162,5 @@ cython_debug/
 # VS Code
 .vscode
 
-data/
+flowpredictiondemo/data/
 outputs/
