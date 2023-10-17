@@ -26,7 +26,7 @@ python -m elasticai.stubgen.main flow_prediction
 ```
 
 ### C-Runtime
-6. Clone or fork [elasticAi.runtime.env5repo](https://github.com/es-ude/enV5-base-project)
+6. Clone or fork [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
 7. Build your own application in the repository
 8. Include generated stub files in project and CMakeLists.txt
 
