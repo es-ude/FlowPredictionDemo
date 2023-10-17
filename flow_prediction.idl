@@ -1,6 +1,6 @@
 stub flow_prediction
 
-path ./middleware
+path ./
 deploy 47 4000
 
 sync predict ( int8[3] inputs) : int8
