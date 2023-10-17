@@ -19,7 +19,7 @@ def train(
 ) -> tuple[list[float], list[float]]:
     train_losses, val_losses = [], []
 
-    dl_train = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+    dl_train = DataLoader(train_data, batch_size=batch_size, shuffle=False)
     dl_val = DataLoader(val_data, batch_size=batch_size, shuffle=False)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -32,6 +32,7 @@ def train(
         running_loss = 0
 
         for samples, labels in dl_train:
+
             samples = samples.to(device)
             labels = labels.to(device)
 
@@ -52,6 +53,11 @@ def train(
         running_loss = 0
 
         for samples, labels in dl_val:
+            if epoch == epochs:
+                inputs = [int(x) for x in torch.round(samples[0]*2**model.frac_bits).tolist()]
+                output = int(torch.round(labels[0]*2**model.frac_bits).item())
+                print("hw level input: {},  [{}]".format(inputs, ", ".join([f"0x{x:02x}" for x in inputs])))
+                print("hw level output: {0}, 0x{0:02x}".format(output))
             samples = samples.to(device)
             labels = labels.to(device)
 

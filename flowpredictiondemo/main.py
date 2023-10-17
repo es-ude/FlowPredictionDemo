@@ -12,6 +12,8 @@ from flowpredictiondemo.training import prepare_data_and_train, OUTPUTS_DIR
 
 class FlowPredictionModel(Sequential):
     def __init__(self, total_bits: int, frac_bits: int) -> None:
+        self.total_bits = total_bits
+        self.frac_bits = frac_bits
         super().__init__(
             Linear(
                 in_features=3,
