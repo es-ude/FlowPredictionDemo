@@ -39,9 +39,11 @@ int8_t flow_prediction_predict(int8_t *inputs)
    modelCompute(true);
 
    while( middlewareUserlogicGetBusyStatus() );
-
-   middlewareReadBlocking(ADDR_SKELETON_INPUTS+0, (uint8_t *)(&_result), 1);
-   middlewareReadBlocking(ADDR_SKELETON_INPUTS+0, (uint8_t *)(&_result), 1);
+   modelCompute(false);
+for(int i = 0; i < 4; i++){
+   middlewareReadBlocking(ADDR_SKELETON_INPUTS+0+i, (uint8_t *)(&_result)+i, 1);
+   middlewareReadBlocking(ADDR_SKELETON_INPUTS+0+i, (uint8_t *)(&_result)+i, 1);
+}
    modelCompute(false);
    middlewareUserlogicDisable();
    middlewareDeinit();
