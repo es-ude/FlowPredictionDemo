@@ -1,3 +1,4 @@
+import pkgutil
 from pathlib import Path
 from typing import Any
 import torch
@@ -52,12 +53,18 @@ def train(
 
         running_loss = 0
 
+        def to_int(x):
+            return torch.round(x * 2 ** model.frac_bits)
+
         for samples, labels in dl_val:
             if epoch == epochs:
-                inputs = [int(x) for x in torch.round(samples[0]*2**model.frac_bits).tolist()]
-                output = int(torch.round(labels[0]*2**model.frac_bits).item())
-                print("hw level input: {},  [{}]".format(inputs, ", ".join([f"0x{x:02x}" for x in inputs])))
-                print("hw level output: {0}, 0x{0:02x}".format(output))
+                inputs_int = to_int(samples[0]).tolist()
+                outputs_int = to_int(labels[0]).item()
+                inputs = samples[0].tolist()
+                output = labels[0].item()
+                print("IO Pairs:\n")
+                print("\thw level input:\n\t\tfxp: {}\n\t\tint: {}\n\t\thex: [{}]".format(inputs, inputs_int, ", ".join([f"0x{int(x):02x}" for x in inputs_int])))
+                print("\thw level output:\n\t\tfxp: {0}\n\t\tint: {1}\n\t\thex: 0x{2:02x}".format(output, outputs_int, int(outputs_int)))
             samples = samples.to(device)
             labels = labels.to(device)
 
