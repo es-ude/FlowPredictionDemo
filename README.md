@@ -8,6 +8,7 @@ In case you have poetry not installed:
 ```bash
 curl -sSL https://install.python-poetry.org | python3 -
 ```
+(We have tested poetry version 1.8.3)
 
 Now install virtual environment via:
 ```bash
