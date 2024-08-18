@@ -13,7 +13,7 @@ matplotlib = "^3.8.0"
 torch = ">=2.0.0, !=2.0.1"
 scikit-learn = "^1.3.1"
 elasticai-creator = {git = "https://github.com/es-ude/elastic-ai.creator.git", rev = "5a6baf4"}
-elasticai-stubGen = {git = "git@github.com:es-ude/elastic-ai.stubGen.git"}
+elasticai-stubGen = {git = "git@github.com:es-ude/elastic-ai.stubGen.git", rev = "55aed4c"}
 
 [build-system]
 requires = ["poetry-core"]
