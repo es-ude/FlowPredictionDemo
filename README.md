@@ -51,15 +51,16 @@ cmake ..
 cmake --build . -j4 --clean-first
 ```
 9. Upload `out/main.uf2` to the RP2040
----
+
+
 Alternatively, you can use the generated stub files in the `env5-base-project`:
-5. Clone or fork [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
-6. Develop your own application in that repository
-7. Include generated stub files in project and as a library in CMakeLists.txt
-8. Follow build instructions from [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
+- Clone or fork [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
+- Develop your own application in that repository
+- Include generated stub files in project and as a library in CMakeLists.txt
+- Follow build instructions from [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
 
 ### Hardware test
-9. use screen to connect to the serial port of the RP2040
+10. use screen to connect to the serial port of the RP2040
 ```
 screen /dev/ttyACM0 # on linux, ttyACM0 can be different on your system
 
