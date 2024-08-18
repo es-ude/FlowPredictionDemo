@@ -16,15 +16,10 @@ poetry install
 ```
 
 ## Workflow
-
 ### Train neural network and generate ENv5 firmware in Python
 1. Run flowpredictiondemo/main.py
 2. Run the autobuild_bin_file_*.sh
 3. Wait for programs to return
-4. Generate the stub:
-```
-python -m elasticai.stubgen.main flow_prediction
-```
 ---
 As alternatives to steps `2.` and `3.`, you have the option to create your own Vivado project. Our VHDL code is not compatible with the latest version of Vivado; however, it has been successfully tested on version 2020.1. Begin by selecting the appropriate FPGA model(xc7s15ftgb196-2) during the project setup. Next, incorporate the `src` and `constraints` folders into your project. This process will allow you to synthesize and implement the bitstream successfully.
 
@@ -32,16 +27,48 @@ I've prepared an example project within the `vivado_proj` folder. It may not fun
 
 Please ensure that you have transferred the `src` and `constraints` folders from your output directory to `vivado_proj` before executing this command.
 
+4. Upload the generated bitstream to the FPGA, you may use vivado to do so or you can use [ElasticNodeBitstreamFlasher](https://github.com/SuperChange001/ElasticNodeBitstreamFlasher).
+
 ### C-Runtime
-6. Clone or fork [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
-7. Develop your own application in that repository
-8. Include generated stub files in project and as a library in CMakeLists.txt
-9. Follow build instructions from [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
+
+5. Generate the stub:
+```
+poetry update # make sure to have the latest version of elasticai-stubgen
+python -m elasticai.stubgen.main flow_prediction
+```
+once the stub is generated, you can find two files in the root directory: `flow_prediction.h` and `flow_prediction.c`.
+6. Copy them to the `src` directory, we have prepared scripts to auto build uf2 files for RP2040.
+7. prepare submodules for building:
+```
+git submodule update --init --recursive
+```
+8. Build the project:
+```
+mkdir build && cd build
+cmake ..
+cmake --build . -j4 --clean-first
+```
+9. Upload `out/main.uf2` to the RP2040
+---
+Alternatively, you can use the generated stub files in the `env5-base-project`:
+5. Clone or fork [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
+6. Develop your own application in that repository
+7. Include generated stub files in project and as a library in CMakeLists.txt
+8. Follow build instructions from [elasticAi.runtime.env5-base-project](https://github.com/es-ude/enV5-base-project)
 
 ### Hardware test
-9. Power on the board
-10. Flash the RP2040
-11. Depending on your application the binfile ...
-    1. is flashed by you via MQTT and HTTP-Get. Make sure to provide the file with a HTTP server.
-    2. can be flashed via USB by yourself.
-12. Now the device should work like your application says!
+9. use screen to connect to the serial port of the RP2040
+```
+screen /dev/ttyACM0 # on linux, ttyACM0 can be different on your system
+
+screen /dev/cu.usbmodem143401 # on mac
+```
+you will see outputs exactly like the following:
+```
+[HWTEST-MIDDLEWARE: runTest] Trure: 38, Predicted: 40
+[HWTEST-MIDDLEWARE: runTest] Trure: 38, Predicted: 40
+[HWTEST-MIDDLEWARE: runTest] Trure: 38, Predicted: 40
+[HWTEST-MIDDLEWARE: runTest] Trure: 63, Predicted: 65
+[HWTEST-MIDDLEWARE: runTest] Trure: 63, Predicted: 65
+[HWTEST-MIDDLEWARE: runTest] Trure: 63, Predicted: 65
+```
