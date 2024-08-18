@@ -72,7 +72,7 @@ static void runTest() {
     int8_t counter = 0;
     uint8_t data[] = {53, 49, 22, 53, 61, 35};
     uint8_t ref_res[] = {38, 63};
-    
+    sleep_ms(500); // wait for the FPGA to boot
     for(int counter=0;counter<2;counter++) {
         for (int i = 0; i < 3; i++) {
             uint8_t offset = counter * 3;
