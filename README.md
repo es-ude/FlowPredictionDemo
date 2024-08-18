@@ -37,7 +37,9 @@ poetry update # make sure to have the latest version of elasticai-stubgen
 python -m elasticai.stubgen.main flow_prediction
 ```
 once the stub is generated, you can find two files in the root directory: `flow_prediction.h` and `flow_prediction.c`.
+
 6. Copy them to the `src` directory, we have prepared scripts to auto build uf2 files for RP2040.
+
 7. prepare submodules for building:
 ```
 git submodule update --init --recursive
