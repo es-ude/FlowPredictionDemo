@@ -66,7 +66,7 @@ screen /dev/ttyACM0 # on linux, ttyACM0 can be different on your system
 
 screen /dev/cu.usbmodem143401 # on mac
 ```
-you will see outputs exactly like the following:
+You will see outputs exactly like the following: 
 ```
 [HWTEST-MIDDLEWARE: runTest] Trure: 38, Predicted: 40
 [HWTEST-MIDDLEWARE: runTest] Trure: 38, Predicted: 40
@@ -75,3 +75,10 @@ you will see outputs exactly like the following:
 [HWTEST-MIDDLEWARE: runTest] Trure: 63, Predicted: 65
 [HWTEST-MIDDLEWARE: runTest] Trure: 63, Predicted: 65
 ```
+Note: The predicted value can be different from the true value since the model on FPGA has quantization errors, plus the training process is random, so your model can be different from ours.
+
+### What is the next steps?
+- You can modify the `src/Main.c` to add more functionalities to the application or conduct more tests.
+- You can modify the neural network model in `flowpredictiondemo/main.py` and re-run the training process.
+- You change the training process, e.g., use more or fewer epochs, and the model's performance should be varied.
+- You can change to a new dataset; maybe it provides more input data points, so you should also change the `flow_prediction.idl` accordingly.
