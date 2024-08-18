@@ -77,7 +77,7 @@ You will see outputs exactly like the following:
 ```
 Note: The predicted value can be different from the true value since the model on FPGA has quantization errors, plus the training process is random, so your model can be different from ours.
 
-### What is the next steps?
+## What are the next steps?
 - You can modify the `src/Main.c` to add more functionalities to the application or conduct more tests.
 - You can modify the neural network model in `flowpredictiondemo/main.py` and re-run the training process.
 - You change the training process, e.g., use more or fewer epochs, and the model's performance should be varied.
